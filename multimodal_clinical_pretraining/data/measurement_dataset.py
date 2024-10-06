@@ -50,14 +50,7 @@ class MIMICIIIBenchmarkDataset:
         for directory in glob.glob(os.path.join(stay_dirs, "*")):
             files = glob.glob(os.path.join(directory, "*"))
 
-            if (
-                int(directory.split("/")[-1]) in split_file[0]
-                and split
-                in [
-                    "train",
-                    "valid",
-                ]
-            ) or split == "test":
+            if (int(directory.split("/")[-1]) in split_file[0] and split in ["train","valid",]) or split == "test":
                 for file in files:
                     if "timeseries" in file:
                         try:

@@ -77,6 +77,7 @@ def init_distributed_mode(args):
         os.environ["LOCAL_RANK"] = str(args.gpu)
         os.environ["WORLD_SIZE"] = str(args.world_size)
     else:
+        args.rank=0 # fix the issue using single GPU
         print("Not using distributed mode")
         return
 
