@@ -1,6 +1,25 @@
 # Multimodal Pretraining of Medical Time Series and Notes
 
-This is the official code for "Multimodal Pretraining of Medical Time Series and Notes" at Machine Learning for Health 2023. The paper can be found at the following link: [https://proceedings.mlr.press/v225/king23a.html](https://proceedings.mlr.press/v225/king23a.html)
+## Development environment
+
+Let's lock down the Python version to 3.9.16. Otherwise will cause insence issues, like the library incompatibilities. 
+
+```bash
+conda create -n mutimodal_mimic python=3.9.16
+```
+
+```bash
+conda init
+```
+
+```bash
+conda activate mutimodal_mimic
+```
+
+```bash
+pip install -r requirements.txt
+```
+
 
 ## Data
 

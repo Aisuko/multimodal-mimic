@@ -7,12 +7,12 @@ def parser():
     # Experiment
     parser.add_argument("--exp_name", type=str, default="exp")
     parser.add_argument(
-        "--mimic_root", type=str, default="/ssd-data/datasets/MIMIC-III/1.4/"
+        "--mimic_root", type=str, default="/home/sagemaker-user/multimodal-mimic/raw-mimic3/"
     )
     parser.add_argument(
         "--mimic_benchmark_root",
         type=str,
-        default="/ssd-data/datasets/mimic3-benchmarks/",
+        default="/home/sagemaker-user/multimodal-mimic/mimic3-benchmarks/",
     )
 
     # Distributed
@@ -33,7 +33,7 @@ def parser():
     parser.add_argument("--warmup_lr", default=1e-5, type=float)
     parser.add_argument("--weight_decay", default=0.02, type=float)
     parser.add_argument("--decay_rate", default=1, type=float)
-    parser.add_argument("--epochs", default=30, type=int)
+    parser.add_argument("--epochs", default=2, type=int)
     parser.add_argument("--warmup_epochs", default=20, type=int)
     parser.add_argument("--cooldown_epochs", default=0, type=int)
     parser.add_argument("--report_freq", type=float, default=250)
