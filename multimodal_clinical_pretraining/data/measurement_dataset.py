@@ -61,19 +61,14 @@ class MIMICIIIBenchmarkDataset:
                         separated_filename = file.split("/")[-1].split("_")
                         if len(separated_filename) < 8:
                             continue
+
                         stay_id = int(separated_filename[0].replace("episode", ""))
 
-                        separated_filename[-1] = separated_filename[-1].replace(
-                            ".csv", ""
-                        )
+                        separated_filename[-1] = separated_filename[-1].replace( ".csv", "")
 
-                        intime = self.string_to_datetime(
-                            separated_filename[3], separated_filename[4]
-                        )
+                        intime = self.string_to_datetime(separated_filename[3], separated_filename[4])
 
-                        outtime = self.string_to_datetime(
-                            separated_filename[-2], separated_filename[-1]
-                        )
+                        outtime = self.string_to_datetime(separated_filename[-2], separated_filename[-1])
 
                         stay_data = icu_stay_df[icu_stay_df["ICUSTAY_ID"] == stay_id]
                         hadm_id = int(stay_data["HADM_ID"].item())
@@ -91,9 +86,7 @@ class MIMICIIIBenchmarkDataset:
                         )
 
                         self.stay_ids.append(stay_id)
-                        self.data_df = pd.concat(
-                            [self.data_df, new_row], ignore_index=True
-                        )
+                        self.data_df = pd.concat([self.data_df, new_row], ignore_index=True)
 
         self.discretizer = Discretizer(
             timestep=1.0,
@@ -111,9 +104,7 @@ class MIMICIIIBenchmarkDataset:
         data = self._read_timeseries(self.data_df.iloc[0]["paths"])
 
         discretizer_header = self.discretizer.transform(data[0])[1].split(",")
-        cont_channels = [
-            i for (i, x) in enumerate(discretizer_header) if x.find("->") == -1
-        ]
+        cont_channels = [i for (i, x) in enumerate(discretizer_header) if x.find("->") == -1]
 
         self.normalizer = Normalizer(fields=cont_channels)
 
