@@ -601,8 +601,8 @@ if __name__ == "__main__":
     print(f"Length of test dataset = {len(test_notes_dataset)}")
 
     root = args.mimic_benchmark_root + "in-hospital-mortality"
-    val_listfile = "val_listfile.csv"
-    test_listfile = "test_listfile.csv"
+    val_listfile = "1percent_val_listfile.csv"
+    test_listfile = "1percent_test_listfile.csv"
 
     val_zeroshot_dataset = IHMDataset(
         root, customListFile=os.path.join(root, val_listfile), train=True

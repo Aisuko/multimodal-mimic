@@ -137,7 +137,7 @@ class MIMICIIIBenchmarkDataset:
         month = int(date[1])
         day = int(date[2])
 
-        time = time_str.split("-")
+        time = time_str.split(":")
         hour = int(time[0])
         minute = int(time[1])
         second = int(time[2])
