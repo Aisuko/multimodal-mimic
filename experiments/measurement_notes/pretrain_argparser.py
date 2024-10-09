@@ -7,7 +7,7 @@ def parser():
     # Experiment
     parser.add_argument("--exp_name", type=str, default="exp")
     parser.add_argument(
-        "--mimic_root", type=str, default="/home/sagemaker-user/mimic_iii_1.4/"
+        "--mimic_root", type=str, default="/home/ubuntu/workspace/mimic_iii_1.4/"
     )
     parser.add_argument(
         "--mimic_benchmark_root",
