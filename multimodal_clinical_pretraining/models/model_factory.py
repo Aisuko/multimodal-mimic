@@ -18,7 +18,9 @@ def create_model(args):
     model = MultiModalModel(
         model_list,
         args,
-    ).to(args.device)
+    )
+    
+    model=model.to(args.device)
 
     return model
 
