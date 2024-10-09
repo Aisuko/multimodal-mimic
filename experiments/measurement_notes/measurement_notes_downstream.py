@@ -161,8 +161,8 @@ def train(args, train_dataloader, val_dataloader, test_dataloader):
                 input_list = []
 
                 # Prepare measurement data
-                measurement_x = values.cuda()
-                labels = labels.cuda()
+                measurement_x = values.to(args.device)
+                labels = labels.to(args.device)
 
                 if args.use_measurements:
                     input_list.append(
@@ -203,8 +203,8 @@ def train(args, train_dataloader, val_dataloader, test_dataloader):
             input_list = []
 
             # Prepare measurement data
-            measurement_x = values.cuda()
-            labels = labels.cuda()
+            measurement_x = values.to(args.device)
+            labels = labels.to(args.device)
 
             if args.use_measurements:
                 input_list.append(
