@@ -12,7 +12,7 @@ def parser():
     parser.add_argument(
         "--mimic_benchmark_root",
         type=str,
-        default="/home/sagemaker-user/raw_data/demo/",
+        default="/home/ubuntu/workspace/multimodal-mimic/mimic3-benchmarks/",
     )
 
     # Distributed
