@@ -7,12 +7,12 @@ def parser():
     # Experiment
     parser.add_argument("--exp_name", type=str, default="exp")
     parser.add_argument(
-        "--mimic_root", type=str, default="/home/ubuntu/workspace/mimic_iii_1.4/"
+        "--mimic_root", type=str, default="/home/sagemaker-user/mimic_iii_1.4/"
     )
     parser.add_argument(
         "--mimic_benchmark_root",
         type=str,
-        default="/home/ubuntu/workspace/multimodal-mimic/mimic3-benchmarks/",
+        default="/home/sagemaker-user/multimodal-mimic/mimic3-benchmarks",
     )
 
     # Distributed
@@ -89,6 +89,6 @@ def parser():
         ],
     )
 
-    parser.add_argument("--device", default="cuda")
+    parser.add_argument("--device", default="cpu")
 
     return parser.parse_args()

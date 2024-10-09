@@ -1,0 +1,24 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Downstream",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/experiments/measurement_notes/measurement_notes_downstream.py",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "Pre-training",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/experiments/measurement_notes/measurement_notes_pretraining.py",
+            "console": "integratedTerminal",
+            "justMyCode": true  
+        }
+    ]
+}

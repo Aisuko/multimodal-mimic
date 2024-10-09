@@ -55,7 +55,6 @@ def train(args, train_dataloader, val_dataloader, test_dataloader):
     model[-1].weight.data.normal_(mean=0.0, std=0.01)
     model[-1].bias.data.zero_()
     model = model.to(args.device)
-    print(model)
 
     if args.experiment == "full_eval":
         params = model.parameters()
@@ -87,9 +86,9 @@ def train(args, train_dataloader, val_dataloader, test_dataloader):
     lr_scheduler, _ = create_scheduler(args, optimizer)
 
     if args.task == "IHM":
-        logger = IHMLogger(args.exp_name, args, log_wandb=True)
+        logger = IHMLogger(args.exp_name, args, log_wandb=False)
     elif args.task == "Phenotyping":
-        logger = PhenotypingLogger(args.exp_name, args, log_wandb=True)
+        logger = PhenotypingLogger(args.exp_name, args, log_wandb=False)
 
     criteria = nn.BCELoss()
     for epoch in range(args.epochs):
