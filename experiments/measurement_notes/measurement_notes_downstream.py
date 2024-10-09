@@ -51,10 +51,10 @@ def train(args, train_dataloader, val_dataloader, test_dataloader):
     model = nn.Sequential(
         model,
         nn.Linear(args.measurement_emb_size, args.n_classes),
-    ).cuda()
+    ).to(args.device)
     model[-1].weight.data.normal_(mean=0.0, std=0.01)
     model[-1].bias.data.zero_()
-    model = model.cuda()
+    model = model.to(args.device)
     print(model)
 
     if args.experiment == "full_eval":
@@ -112,8 +112,8 @@ def train(args, train_dataloader, val_dataloader, test_dataloader):
             optimizer.zero_grad()
 
             # Prepare measurement data
-            measurement_x = values.cuda()
-            labels = labels.cuda()
+            measurement_x = values.to(args.device)
+            labels = labels.to(args.device)
 
             input_list = []
 

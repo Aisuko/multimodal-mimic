@@ -639,14 +639,19 @@ if __name__ == "__main__":
     train_sampler = torch.utils.data.distributed.DistributedSampler(
         train_notes_dataset, shuffle=True
     )
+    # train_sampler = RandomSampler(train_notes_dataset)
 
     val_sampler = torch.utils.data.distributed.DistributedSampler(
         val_notes_dataset, shuffle=False
     )
+    # val_sampler=RandomSampler(val_notes_dataset)
 
     test_sampler = torch.utils.data.distributed.DistributedSampler(
         test_notes_dataset, shuffle=False
     )
+
+    # from torch.utils.data import RandomSampler
+    # test_sampler=RandomSampler(test_notes_dataset)
 
     train_dataloader = DataLoader(
         train_notes_dataset,

@@ -89,6 +89,6 @@ def parser():
         ],
     )
 
-    parser.add_argument("--device", default="cuda")
+    parser.add_argument("--device", default="cpu")
 
     return parser.parse_args()

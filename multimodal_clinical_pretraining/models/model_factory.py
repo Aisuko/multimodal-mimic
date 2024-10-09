@@ -18,7 +18,7 @@ def create_model(args):
     model = MultiModalModel(
         model_list,
         args,
-    ).cuda()
+    ).to(args.device)
 
     return model
 

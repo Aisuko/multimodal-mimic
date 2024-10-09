@@ -29,12 +29,12 @@ def parser():
     # Data
     parser.add_argument("--batch_size", type=int, default=512)
     parser.add_argument(
-        "--mimic_root", type=str, default="/ssd-data/datasets/MIMIC-III/1.4/"
+        "--mimic_root", type=str, default="/home/sagemaker-user/mimic_iii_1.4/"
     )
     parser.add_argument(
         "--mimic_benchmark_root",
         type=str,
-        default="/ssd-data/datasets/mimic3-benchmarks/",
+        default="/home/sagemaker-user/raw_data/demo/",
     )
 
     # Training
@@ -82,6 +82,6 @@ def parser():
     parser.add_argument("--notes_dropout", type=float, default=0.1)
     parser.add_argument("--notes_max_seq_len", type=int, default=256)
 
-    parser.add_argument("--device", default="cuda")
+    parser.add_argument("--device", default="cpu")
 
     return parser.parse_args()
