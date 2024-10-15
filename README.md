@@ -30,6 +30,10 @@ conda activate mutimodal_mimic
 pip install -r requirements.txt
 ```
 
+```bash
+# deactivate
+conda deactivate
+```
 
 ## Data
 
