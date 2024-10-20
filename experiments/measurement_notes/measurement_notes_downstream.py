@@ -306,20 +306,20 @@ if __name__ == "__main__":
         i for (i, x) in enumerate(discretizer_header) if x.find("->") == -1
     ]
 
-    train_dataset.normalizer = Normalizer(fields=cont_channels)
-    train_dataset.normalizer.load_params(
-        "./multimodal_clinical_pretraining/resources/normalizer_params"
-    )
+    # train_dataset.normalizer = Normalizer(fields=cont_channels)
+    # train_dataset.normalizer.load_params(
+    #     "./multimodal_clinical_pretraining/resources/normalizer_params"
+    # )
 
-    val_dataset.normalizer = Normalizer(fields=cont_channels)
-    val_dataset.normalizer.load_params(
-        "./multimodal_clinical_pretraining/resources/normalizer_params"
-    )
+    # val_dataset.normalizer = Normalizer(fields=cont_channels)
+    # val_dataset.normalizer.load_params(
+    #     "./multimodal_clinical_pretraining/resources/normalizer_params"
+    # )
 
-    test_dataset.normalizer = Normalizer(fields=cont_channels)
-    test_dataset.normalizer.load_params(
-        "./multimodal_clinical_pretraining/resources/normalizer_params"
-    )
+    # test_dataset.normalizer = Normalizer(fields=cont_channels)
+    # test_dataset.normalizer.load_params(
+    #     "./multimodal_clinical_pretraining/resources/normalizer_params"
+    # )
 
     print(f"Length of training dataset = {len(train_dataset)}")
     print(f"Length of test dataset = {len(test_dataset)}")
