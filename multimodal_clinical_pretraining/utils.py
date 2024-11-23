@@ -1,9 +1,8 @@
-import os
 import torch
 
 
 def load_pretrained_model(model, args):
-    state_dict = torch.load(args.pretrained_path, map_location="cpu")
+    state_dict = torch.load(args.pretrained_path, map_location="cuda")
 
     backbone_state_dict = {}
 
