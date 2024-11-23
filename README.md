@@ -35,6 +35,19 @@ pip install -r requirements.txt
 conda deactivate
 ```
 
+# GPU training
+```
+tmux new -s session_name
+tmux ls
+tmux a -t session_name
+python experiments/measurement_notes/measurement_notes_downstream.py > train_log.txt 2>&1
+Control+B D
+htop
+nvidia-smi
+less train_log.txt
+tail -f train_log.txt
+```
+
 ## Data
 
 ### MIMIC-III

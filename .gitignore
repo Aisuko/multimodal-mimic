@@ -141,3 +141,5 @@ ihm
 exp_outputs
 
 mimic3-benchmarks/root/
+
+*.csv
