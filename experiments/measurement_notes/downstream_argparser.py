@@ -41,14 +41,14 @@ def parser():
     # Training
     parser.add_argument("--opt", default="adamW")
     parser.add_argument("--sched", default="cosine")
-    parser.add_argument("--lr", default=2e-4, type=float)
+    parser.add_argument("--lr", default=0.01, type=float)
     parser.add_argument("--linear_lr", default=0.001, type=float)
     parser.add_argument("--min_lr", default=1e-8, type=float)
     parser.add_argument("--warmup", default=True, type=bool)
     parser.add_argument("--warmup_lr", default=1e-5, type=float)
     parser.add_argument("--weight_decay", default=0.02, type=float)
     parser.add_argument("--decay_rate", default=1, type=float)
-    parser.add_argument("--warmup_epochs", default=20, type=int)
+    parser.add_argument("--warmup_epochs", default=0, type=int)
     parser.add_argument("--cooldown_epochs", default=0, type=int)
     parser.add_argument("--epochs", type=int, default=600)
     parser.add_argument("--grad_clip", type=float, default=5)
@@ -70,7 +70,7 @@ def parser():
         "--measurement_activation", choices=["ReLU", "GELU"], default="GELU"
     )
     parser.add_argument("--measurement_mask_rate", type=float, default=0.1)
-    parser.add_argument("--measurement_max_seq_len", type=int, default=128)
+    parser.add_argument("--measurement_max_seq_len", type=int, default=256)
     parser.add_argument("--measurement_dropout", type=float, default=0.1)
 
     # Notes Model
@@ -81,7 +81,7 @@ def parser():
     parser.add_argument("--notes_num_layers", type=int, default=8)
     parser.add_argument("--notes_mask_rate", type=float, default=0.4)
     parser.add_argument("--notes_dropout", type=float, default=0.1)
-    parser.add_argument("--notes_max_seq_len", type=int, default=128)
+    parser.add_argument("--notes_max_seq_len", type=int, default=256)
 
     parser.add_argument("--device", default="cuda")
 
