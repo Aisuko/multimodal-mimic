@@ -135,7 +135,6 @@ sftp-config.json
 exp/
 *.npy
 wandb
-*.pth
 phen
 ihm
 exp_outputs
