@@ -6,7 +6,7 @@
     "configurations": [
         {
             "name": "Downstream",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/experiments/measurement_notes/measurement_notes_downstream.py",
             "console": "integratedTerminal",
@@ -14,7 +14,7 @@
         },
         {
             "name": "Pre-training",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/experiments/measurement_notes/measurement_notes_pretraining.py",
             "console": "integratedTerminal",

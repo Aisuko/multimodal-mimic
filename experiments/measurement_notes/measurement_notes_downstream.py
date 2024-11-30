@@ -41,26 +41,38 @@ from multimodal_clinical_pretraining.utils import load_pretrained_model
 from multimodal_clinical_pretraining.scheduler import create_scheduler
 from multimodal_clinical_pretraining.models import create_model
 
+from sklearn.metrics import accuracy_score, precision_recall_fscore_support
+
+
+class ClinicalMultiModal(nn.Module):
+    def __init__(self, base_model, measurement_emb_size, n_classes):
+        super(ClinicalMultiModal, self).__init__()
+        self.base_model=base_model
+        self.classifier=nn.Linear(measurement_emb_size, n_classes)
+        self.classifier.weight.data.normal_(mean=0.0, std=0.01)
+        self.classifier.bias.data.zero_()
+    def forward(self,x):
+        features=self.base_model(x)
+        logits=self.classifier(features[:,0,:])
+        return logits
 
 def train(args, train_dataloader, val_dataloader, test_dataloader):
-    model = create_model(args)
+    base_model = create_model(args)
 
     if args.pretrained_path is not None:
-        model = load_pretrained_model(model, args)
+        base_model = load_pretrained_model(base_model, args)
 
-    model = nn.Sequential(
-        model,
-        nn.Linear(args.measurement_emb_size, args.n_classes),
+    model = ClinicalMultiModal(
+        base_model,
+        args.measurement_emb_size,
+        args.n_classes
     ).to(args.device)
-    model[-1].weight.data.normal_(mean=0.0, std=0.01)
-    model[-1].bias.data.zero_()
-    model = model.to(args.device)
 
     if args.experiment == "full_eval":
         params = model.parameters()
     elif args.experiment == "linear_eval":
-        params = model[-1].parameters()
-        model[0].eval()
+        params = model.classifier.parameters()
+        model.base_model.eval()
     elif args.experiment in [
         "semi_0_5_eval",
         "semi_0_1_eval",
@@ -69,8 +81,8 @@ def train(args, train_dataloader, val_dataloader, test_dataloader):
     ]:
         if args.pretrained_path is not None:
             params = [
-                {"params": model[0].parameters(), "lr": args.lr},
-                {"params": model[-1].parameters(), "lr": args.linear_lr},
+                {"params": model.base_model.parameters(), "lr": args.lr},
+                {"params": model.classifier.parameters(), "lr": args.linear_lr},
             ]
         else:
             params = model.parameters()
@@ -90,7 +102,7 @@ def train(args, train_dataloader, val_dataloader, test_dataloader):
     elif args.task == "Phenotyping":
         logger = PhenotypingLogger(args.exp_name, args, log_wandb=False)
 
-    criteria = nn.BCELoss()
+    criteria = nn.BCELoss() # for numerical stability
     for epoch in range(args.epochs):
         ys = []
         preds = []
@@ -103,7 +115,7 @@ def train(args, train_dataloader, val_dataloader, test_dataloader):
         ]:
             model.train()
         else:
-            model[-1].train()
+            model.classifier.train()
 
         logger.reset()
 
@@ -124,7 +136,7 @@ def train(args, train_dataloader, val_dataloader, test_dataloader):
                 )
 
             seq_lengths = torch.LongTensor(seq_lengths)
-            logits = model(input_list)[:, 0, :].contiguous()
+            logits = model(input_list)
             logits = F.sigmoid(logits)
 
             if args.task == "IHM":
@@ -170,7 +182,7 @@ def train(args, train_dataloader, val_dataloader, test_dataloader):
                         }
                     )
 
-                logits = model(input_list)[:, 0, :].contiguous()
+                logits = model(input_list)
                 logits = F.sigmoid(logits)
 
                 if args.task == "IHM":
@@ -192,6 +204,7 @@ def train(args, train_dataloader, val_dataloader, test_dataloader):
         preds = np.concatenate(preds)
         ys = np.concatenate(ys)
 
+    # For testing
     model.eval()
 
     ys = []
@@ -212,7 +225,7 @@ def train(args, train_dataloader, val_dataloader, test_dataloader):
                     }
                 )
 
-            logits = model(input_list)[:, 0, :].contiguous()
+            logits = model(input_list)
             logits = F.sigmoid(logits)
 
             if args.task == "IHM":
@@ -230,8 +243,15 @@ def train(args, train_dataloader, val_dataloader, test_dataloader):
 
     logger.print_metrics(epoch, split="Test")
 
-    preds = np.concatenate(preds)
-    ys = np.concatenate(ys)
+    # Concatenate predictions and labels
+    ys = np.concatenate([y.numpy() for y in ys])  # Convert tensors to NumPy arrays
+    preds = np.concatenate([p.numpy() for p in preds])
+
+    # Binarize predictions
+    preds_binary = (preds > 0.5).astype(int)  # Apply threshold for binary classification
+    # Compute precision, recall, and F1-score
+    precision, recall, f1, _ = precision_recall_fscore_support(ys, preds_binary, average='binary')
+    print(f"Precision: {precision:.4f}, Recall: {recall:.4f}, F1-Score: {f1:.4f}")
 
 
 if __name__ == "__main__":
@@ -332,7 +352,7 @@ if __name__ == "__main__":
         batch_size=args.batch_size,
         num_workers=0,
         collate_fn=pad_colalte,
-        pin_memory=False,
+        pin_memory=True,
         shuffle=True,
     )
 
@@ -341,7 +361,7 @@ if __name__ == "__main__":
         batch_size=args.batch_size * 2,
         num_workers=0,
         collate_fn=pad_colalte,
-        pin_memory=False,
+        pin_memory=True,
         shuffle=False,
     )
 
@@ -350,7 +370,7 @@ if __name__ == "__main__":
         batch_size=args.batch_size * 2,
         num_workers=0,
         collate_fn=pad_colalte,
-        pin_memory=False,
+        pin_memory=True,
         shuffle=False,
     )
 
