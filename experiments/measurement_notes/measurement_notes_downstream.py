@@ -55,8 +55,69 @@ class ClinicalMultiModal(nn.Module):
         features=self.base_model(x)
         logits=self.classifier(features[:,0,:])
         return logits
+    
 
-def train(args, train_dataloader, val_dataloader, test_dataloader):
+def evaluate_model(model, dataloader, device, criterion, logger, threshold=0.5, task="IHM", use_measurements=True):
+    """
+    Evaluate the model on the provided DataLoader.
+
+    Args:
+        model (torch.nn.Module): The model to evaluate.
+        dataloader (torch.utils.data.DataLoader): DataLoader for the evaluation dataset.
+        device (torch.device): Device to perform evaluation on.
+        criterion (torch.nn.Module): Loss function.
+        logger (Logger): Logger to track metrics.
+        threshold (float, optional): Threshold for binary classification. Defaults to 0.5.
+        task (str, optional): Specific task identifier. Defaults to "IHM".
+        use_measurements (bool, optional): Flag to use measurement data. Defaults to True.
+
+    Returns:
+        dict: Dictionary containing evaluation metrics.
+    """
+    model.eval()
+    ys = []
+    preds = []
+
+    with torch.no_grad():
+        for values, labels, seq_lengths, _ in dataloader:
+            input_list = []
+
+            # Prepare measurement data
+            measurement_x = values.to(device)
+            labels = labels.to(device)
+
+            if use_measurements:
+                input_list.append({"x": measurement_x})
+
+            logits = model(input_list)
+            logits = torch.sigmoid(logits)
+
+            if task == "IHM":
+                logits = logits[:, 0]
+
+            y = labels
+            loss = criterion(logits, y)
+            pred = logits
+
+            ys.extend(y.cpu().numpy())
+            preds.extend(pred.cpu().numpy())
+
+            logger.update(pred, y, loss)
+
+    logger.print_metrics(split="Test")
+
+    preds = np.array(preds)
+    binary_preds = (preds > threshold).astype(int)  # Apply threshold for binary classification
+
+    # Compute precision, recall, and F1-score
+    accuracy = accuracy_score(ys, binary_preds)
+    precision, recall, f1, _ = precision_recall_fscore_support(ys, binary_preds, average='binary')
+
+
+    print(f"Accuracy: {accuracy:.4f}, Precision: {precision:.4f}, Recall: {recall:.4f}, F1-Score: {f1:.4f}")
+
+
+def train(args, train_dataloader, test_dataloader):
     base_model = create_model(args)
 
     if args.pretrained_path is not None:
@@ -73,19 +134,6 @@ def train(args, train_dataloader, val_dataloader, test_dataloader):
     elif args.experiment == "linear_eval":
         params = model.classifier.parameters()
         model.base_model.eval()
-    elif args.experiment in [
-        "semi_0_5_eval",
-        "semi_0_1_eval",
-        "semi_0_01_eval",
-        "full_eval",
-    ]:
-        if args.pretrained_path is not None:
-            params = [
-                {"params": model.base_model.parameters(), "lr": args.lr},
-                {"params": model.classifier.parameters(), "lr": args.linear_lr},
-            ]
-        else:
-            params = model.parameters()
 
     optimizer = optim.AdamW(
         params,
@@ -102,21 +150,14 @@ def train(args, train_dataloader, val_dataloader, test_dataloader):
     elif args.task == "Phenotyping":
         logger = PhenotypingLogger(args.exp_name, args, log_wandb=False)
 
-    criteria = nn.BCELoss() # for numerical stability
+    criteria = nn.BCELoss()
+
     for epoch in range(args.epochs):
         ys = []
         preds = []
         print(f"LR = {optimizer.param_groups[0]['lr']}")
-        if args.experiment in [
-            "full_eval",
-            "semi_0_5_eval",
-            "semi_0_1_eval",
-            "semi_0_01_eval",
-        ]:
-            model.train()
-        else:
-            model.classifier.train()
-
+        
+        model.classifier.train()
         logger.reset()
 
         for values, labels, seq_lengths, _ in train_dataloader:
@@ -150,8 +191,8 @@ def train(args, train_dataloader, val_dataloader, test_dataloader):
 
             pred = logits
 
-            ys.append(y.detach().cpu())
-            preds.append(pred.detach().cpu())
+            ys.extend(y.detach().cpu().numpy())
+            preds.extend(pred.detach().cpu().numpy())
 
             logger.update(pred, y, loss)
 
@@ -159,100 +200,16 @@ def train(args, train_dataloader, val_dataloader, test_dataloader):
         logger.print_metrics(epoch, split="Train")
         logger.reset()
 
-        preds = np.concatenate(preds)
-        ys = np.concatenate(ys)
+        preds=np.array(preds)
+        binary_preds=(preds>=0.5).astype(int)
+        # Compute accuracy_score, precision, recall, and F1-score
+        accuracy=accuracy_score(ys, binary_preds)
+        precision, recall, f1, _ = precision_recall_fscore_support(ys, binary_preds, average='binary')
+        print(f"Accuracy: {accuracy:.4f}, Precision: {precision:.4f}, Recall: {recall:.4f}, F1-Score: {f1:.4f}")
 
-        model.eval()
 
-        ys = []
-        preds = []
-
-        with torch.no_grad():
-            for values, labels, seq_lengths, _ in val_dataloader:
-                input_list = []
-
-                # Prepare measurement data
-                measurement_x = values.to(args.device)
-                labels = labels.to(args.device)
-
-                if args.use_measurements:
-                    input_list.append(
-                        {
-                            "x": measurement_x,
-                        }
-                    )
-
-                logits = model(input_list)
-                logits = F.sigmoid(logits)
-
-                if args.task == "IHM":
-                    logits = logits[:, 0]
-
-                y = labels
-
-                loss = criteria(logits, y)
-                pred = logits
-
-                ys.append(y.detach().cpu())
-                preds.append(pred.detach().cpu())
-
-                logger.update(pred, y, loss)
-
-        logger.print_metrics(epoch, split="Eval")
-        logger.reset()
-
-        preds = np.concatenate(preds)
-        ys = np.concatenate(ys)
-
-    # For testing
-    model.eval()
-
-    ys = []
-    preds = []
-
-    with torch.no_grad():
-        for values, labels, seq_lengths, _ in test_dataloader:
-            input_list = []
-
-            # Prepare measurement data
-            measurement_x = values.to(args.device)
-            labels = labels.to(args.device)
-
-            if args.use_measurements:
-                input_list.append(
-                    {
-                        "x": measurement_x,
-                    }
-                )
-
-            logits = model(input_list)
-            logits = F.sigmoid(logits)
-
-            if args.task == "IHM":
-                logits = logits[:, 0]
-
-            y = labels
-
-            loss = criteria(logits, y)
-            pred = logits
-
-            ys.append(y.detach().cpu())
-            preds.append(pred.detach().cpu())
-
-            logger.update(pred, y, loss)
-
-    logger.print_metrics(epoch, split="Test")
-
-    # Concatenate predictions and labels
-    ys = np.concatenate([y.numpy() for y in ys])  # Convert tensors to NumPy arrays
-    preds = np.concatenate([p.numpy() for p in preds])
-
-    # Binarize predictions
-    preds_binary = (preds > 0.5).astype(int)  # Apply threshold for binary classification
-    # Compute precision, recall, and F1-score
-    precision, recall, f1, _ = precision_recall_fscore_support(ys, preds_binary, average='binary')
-    print(f"Precision: {precision:.4f}, Recall: {recall:.4f}, F1-Score: {f1:.4f}")
-
+        evaluate_model(model,test_dataloader,args.device,criteria,logger)
+        
 
 if __name__ == "__main__":
     activation_map = {"GELU": nn.GELU(), "ReLU": nn.ReLU()}
@@ -295,9 +252,9 @@ if __name__ == "__main__":
         train_dataset = IHMDataset(
             root, customListFile=os.path.join(root, train_listfile), train=True
         )
-        val_dataset = IHMDataset(
-            root, customListFile=os.path.join(root, val_listfile), train=True
-        )
+        # val_dataset = IHMDataset(
+        #     root, customListFile=os.path.join(root, val_listfile), train=True
+        # )
         test_dataset = IHMDataset(
             root, customListFile=os.path.join(root, test_listfile), train=False
         )
@@ -312,9 +269,9 @@ if __name__ == "__main__":
             train=True,
             transform=ShuffleTransform(args.measurement_max_seq_len),
         )
-        val_dataset = PhenotypingDataset(
-            root, customListFile=os.path.join(root, val_listfile), train=True
-        )
+        # val_dataset = PhenotypingDataset(
+        #     root, customListFile=os.path.join(root, val_listfile), train=True
+        # )
         test_dataset = PhenotypingDataset(
             root, customListFile=os.path.join(root, test_listfile), train=False
         )
@@ -331,10 +288,10 @@ if __name__ == "__main__":
         "./multimodal_clinical_pretraining/resources/normalizer_params"
     )
 
-    val_dataset.normalizer = Normalizer(fields=cont_channels)
-    val_dataset.normalizer.load_params(
-        "./multimodal_clinical_pretraining/resources/normalizer_params"
-    )
+    # val_dataset.normalizer = Normalizer(fields=cont_channels)
+    # val_dataset.normalizer.load_params(
+    #     "./multimodal_clinical_pretraining/resources/normalizer_params"
+    # )
 
     test_dataset.normalizer = Normalizer(fields=cont_channels)
     test_dataset.normalizer.load_params(
@@ -356,14 +313,14 @@ if __name__ == "__main__":
         shuffle=True,
     )
 
-    val_dataloader = DataLoader(
-        val_dataset,
-        batch_size=args.batch_size * 2,
-        num_workers=0,
-        collate_fn=pad_colalte,
-        pin_memory=True,
-        shuffle=False,
-    )
+    # val_dataloader = DataLoader(
+    #     val_dataset,
+    #     batch_size=args.batch_size * 2,
+    #     num_workers=0,
+    #     collate_fn=pad_colalte,
+    #     pin_memory=True,
+    #     shuffle=False,
+    # )
 
     test_dataloader = DataLoader(
         test_dataset,
@@ -389,6 +346,6 @@ if __name__ == "__main__":
     output = train(
         args,
         train_dataloader,
-        val_dataloader,
+        # val_dataloader,
         test_dataloader,
     )
