@@ -57,7 +57,7 @@ class ClinicalMultiModal(nn.Module):
         return logits
     
 
-def evaluate_model(model, dataloader, device, criterion, logger, threshold=0.5, task="IHM", use_measurements=True):
+def evaluate_model(model, dataloader, device, criterion, logger, epoch, threshold=0.5, task="IHM", use_measurements=True):
     """
     Evaluate the model on the provided DataLoader.
 
@@ -104,7 +104,7 @@ def evaluate_model(model, dataloader, device, criterion, logger, threshold=0.5, 
 
             logger.update(pred, y, loss)
 
-    logger.print_metrics(split="Test")
+    logger.print_metrics(epoch,split="Test")
 
     preds = np.array(preds)
     binary_preds = (preds > threshold).astype(int)  # Apply threshold for binary classification
@@ -208,7 +208,7 @@ def train(args, train_dataloader, test_dataloader):
         print(f"Accuracy: {accuracy:.4f}, Precision: {precision:.4f}, Recall: {recall:.4f}, F1-Score: {f1:.4f}")
 
 
-        evaluate_model(model,test_dataloader,args.device,criteria,logger)
+        evaluate_model(model,test_dataloader,args.device,criteria,logger,epoch)
         
 
 if __name__ == "__main__":
