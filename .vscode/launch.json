@@ -4,6 +4,8 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+
+
         {
             "name": "Downstream",
             "type": "debugpy",
@@ -19,6 +21,30 @@
             "program": "${workspaceFolder}/experiments/measurement_notes/measurement_notes_pretraining.py",
             "console": "integratedTerminal",
             "justMyCode": true  
+        },
+        {
+            "name": "XGBoost",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/experiments/measurement_notes/traditional_xgboost.py",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "LogisticRegression",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/experiments/measurement_notes/traditional_logistic_regression.py",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name":"RandomForestClassifier",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/experiments/measurement_notes/traditional_random_forest.py",
+            "console": "integratedTerminal",
+            "justMyCode": true
         }
     ]
 }
