@@ -15,14 +15,6 @@
             "justMyCode": true
         },
         {
-            "name": "Pre-training",
-            "type": "debugpy",
-            "request": "launch",
-            "program": "${workspaceFolder}/experiments/measurement_notes/measurement_notes_pretraining.py",
-            "console": "integratedTerminal",
-            "justMyCode": true  
-        },
-        {
             "name": "XGBoost",
             "type": "debugpy",
             "request": "launch",

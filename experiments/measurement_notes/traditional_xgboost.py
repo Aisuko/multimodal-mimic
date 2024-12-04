@@ -48,11 +48,7 @@ def train(args, train_dataloader, test_dataloader):
         # Add other parameters as needed
     }
     # Train the model
-    xgb_model = xgb.train(
-        params, 
-        dtrain,
-        early_stopping_rounds=50
-        )
+    xgb_model = xgb.train(params, dtrain)
 
     test(xgb_model, test_dataloader)
 
