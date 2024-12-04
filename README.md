@@ -1,5 +1,30 @@
 # Multimodal Pretraining of Medical Time Series and Notes
 
+
+## GPU environment
+
+```bash
+# 
+sudo apt update && sudo apt upgrade
+sudo apt install build-essential
+
+# Installing Nvidia-smi
+sudo apt install -y software-properties-common
+sudo apt install ubuntu-drivers-common -y
+
+# Detect recommended drivers
+sudo ubuntu-drivers devices
+
+# Install the driver(if you see the recommend GPU driver in there)
+sudo ubuntu-drivers install
+
+# Reboot
+sudo reboot
+
+# install nvcc
+sudo apt install nvidia-cuda-toolkit -y
+```
+
 ## Development environment
 
 Let's lock down the Python version to 3.9.16. Otherwise will cause insence issues, like the library incompatibilities. 
@@ -27,7 +52,13 @@ conda activate mutimodal_mimic
 ```
 
 ```bash
-pip install -r requirements.txt
+# installing PyTorch
+conda install pytorch torchvision torchaudio pytorch-cuda=11.8 -c pytorch -c nvidia
+
+# install torchmimic
+pip install 'torchmimic @ git+https://github.com/kingrc15/torchmimic.git@b3610fc98025ec42903e7646c715b4a5faeac403'
+pip install pandas
+pip install transformers
 ```
 
 ```bash
