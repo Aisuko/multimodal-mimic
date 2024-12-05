@@ -18,8 +18,8 @@ def parser():
         default="linear_eval",
     )
     parser.add_argument("--task", choices=["IHM", "Phenotyping"], default="IHM")
-    parser.add_argument("--pretrained_path", type=str, default=None)
-    # parser.add_argument("--pretrained_path", type=str, default='/home/ubuntu/workspace/multimodal-mimic/experiments/measurement_notes/pretrained_model.pth')
+    # parser.add_argument("--pretrained_path", type=str, default=None)
+    parser.add_argument("--pretrained_path", type=str, default='/home/ubuntu/workspace/multimodal-mimic/multimodal_clinical_pretraining/pretrain/pretrained_model.pth')
     parser.add_argument("--world-size", default=1, type=int)
     parser.add_argument("--local-rank", default=-1, type=int)
     parser.add_argument("--dist-url", default="env://")
@@ -39,18 +39,18 @@ def parser():
     )
 
     # Training
-    parser.add_argument("--opt", default="adamW")
-    parser.add_argument("--sched", default="cosine")
-    parser.add_argument("--lr", default=0.01, type=float)
+    parser.add_argument("--opt", default="adamW") 
+    parser.add_argument("--sched", default="cosine") # dynamic asjust the learning rate during training
+    parser.add_argument("--lr", default=1e-3, type=float) # 
     parser.add_argument("--linear_lr", default=0.001, type=float)
-    parser.add_argument("--min_lr", default=1e-8, type=float)
+    parser.add_argument("--min_lr", default=1e-4, type=float)
     parser.add_argument("--warmup", default=True, type=bool)
     parser.add_argument("--warmup_lr", default=1e-5, type=float)
     parser.add_argument("--weight_decay", default=0.02, type=float)
-    parser.add_argument("--decay_rate", default=1, type=float)
-    parser.add_argument("--warmup_epochs", default=0, type=int)
-    parser.add_argument("--cooldown_epochs", default=0, type=int)
-    parser.add_argument("--epochs", type=int, default=600)
+    parser.add_argument("--decay_rate", default=0.9, type=float) # ensure a gradual reduction in the learning rate
+    parser.add_argument("--warmup_epochs", default=0, type=int) # for fitting 1e-3, we set 5-10 epochs to allow the model to gradually adapt to the learning process
+    parser.add_argument("--cooldown_epochs", default=5, type=int)
+    parser.add_argument("--epochs", type=int, default=5)
     parser.add_argument("--grad_clip", type=float, default=5)
 
     # Multimodal Model
@@ -71,7 +71,7 @@ def parser():
     )
     parser.add_argument("--measurement_mask_rate", type=float, default=0.1)
     parser.add_argument("--measurement_max_seq_len", type=int, default=256)
-    parser.add_argument("--measurement_dropout", type=float, default=0.1)
+    parser.add_argument("--measurement_dropout", type=float, default=0)
 
     # Notes Model
     parser.add_argument("--text_model", default="BERT", choices=["BERT"])
@@ -80,7 +80,7 @@ def parser():
     parser.add_argument("--notes_num_heads", type=int, default=8)
     parser.add_argument("--notes_num_layers", type=int, default=8)
     parser.add_argument("--notes_mask_rate", type=float, default=0.4)
-    parser.add_argument("--notes_dropout", type=float, default=0.1)
+    parser.add_argument("--notes_dropout", type=float, default=0)
     parser.add_argument("--notes_max_seq_len", type=int, default=256)
 
     parser.add_argument("--device", default="cuda")
