@@ -186,4 +186,4 @@ if __name__ == "__main__":
     np.random.seed(42)
 
     results=analyze_dataloader(train_dataloader)
-    print("24-Hour Data Results:", results)
+    print("Data Results:", results)
