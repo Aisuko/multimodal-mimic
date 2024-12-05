@@ -18,8 +18,8 @@ def parser():
         default="linear_eval",
     )
     parser.add_argument("--task", choices=["IHM", "Phenotyping"], default="IHM")
-    # parser.add_argument("--pretrained_path", type=str, default=None)
-    parser.add_argument("--pretrained_path", type=str, default='/home/ubuntu/workspace/multimodal-mimic/experiments/measurement_notes/pretrained_model.pth')
+    parser.add_argument("--pretrained_path", type=str, default=None)
+    # parser.add_argument("--pretrained_path", type=str, default='/home/ubuntu/workspace/multimodal-mimic/experiments/measurement_notes/pretrained_model.pth')
     parser.add_argument("--world-size", default=1, type=int)
     parser.add_argument("--local-rank", default=-1, type=int)
     parser.add_argument("--dist-url", default="env://")
