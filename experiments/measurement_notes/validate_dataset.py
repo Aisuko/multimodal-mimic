@@ -24,20 +24,7 @@ import pandas as pd
 import torch
 import numpy as np
 from scipy.stats import pearsonr
-from statsmodels.tsa.stattools import acf
-
-def compute_snr(data):
-    """
-    Compute the Signal-to-Noise Ratio (SNR) for the dataset.
-    Args:
-        data (torch.Tensor): Input data tensor of shape (batch_size, seq_len, num_features).
-    Returns:
-        float: SNR value.
-    """
-    signal_power = torch.mean(data ** 2)
-    noise_power = torch.var(data)
-    snr = 10 * torch.log10(signal_power / noise_power)
-    return snr.item()
+from scipy.stats import entropy
 
 def compute_feature_correlation(data):
     """
@@ -79,6 +66,59 @@ def compute_autocorrelation_pandas(data, lag=1):
     avg_autocorrelation = np.mean(autocorrelations) if autocorrelations else float('nan')
     return avg_autocorrelation
 
+def compute_completeness(data):
+    """
+    Compute the completeness of the dataset.
+    Args:
+        data (torch.Tensor): Input data tensor of shape (batch_size, seq_len, num_features).
+    Returns:
+        float: Completeness percentage.
+    """
+    total_elements = data.numel()
+    non_missing_elements = torch.sum(~torch.isnan(data))
+    completeness = (non_missing_elements / total_elements).item() * 100
+    return completeness
+
+def compute_shannon_entropy(sequence):
+    """
+    Compute Shannon Entropy for a time-series sequence.
+
+    Args:
+        sequence (numpy.ndarray): Time-series data.
+
+    Returns:
+        float: Shannon Entropy value.
+    """
+    # Flatten the sequence to ensure it's 1D
+    flattened_sequence = sequence.flatten()
+
+    # Ensure all values are non-negative integers
+    if np.issubdtype(flattened_sequence.dtype, np.floating):
+        # If the sequence contains floats, discretize by binning
+        # Example: map values to integers (e.g., using histogram bins)
+        min_val = flattened_sequence.min()
+        max_val = flattened_sequence.max()
+        # Define number of bins; this can be adjusted based on your data
+        num_bins = 256
+        bins = np.linspace(min_val, max_val, num_bins)
+        digitized = np.digitize(flattened_sequence, bins) - 1
+    else:
+        # If already integers, ensure they are non-negative
+        digitized = flattened_sequence.astype(int)
+        if digitized.min() < 0:
+            raise ValueError("Sequence contains negative values, which are not allowed.")
+
+    # Count occurrences of each value
+    value_counts = np.bincount(digitized)
+    probabilities = value_counts / np.sum(value_counts)
+
+    # Remove zero probabilities to avoid log(0)
+    probabilities = probabilities[probabilities > 0]
+
+    # Compute Shannon Entropy
+    return entropy(probabilities, base=2)
+
+
 def analyze_dataloader(dataloader):
     """
     Analyze the DataLoader to compute SNR, feature correlation, and autocorrelation.
@@ -88,19 +128,31 @@ def analyze_dataloader(dataloader):
         dict: Dictionary containing SNR, average feature correlation, and average autocorrelation.
     """
     all_data = []
+    all_entropies = []  # To store entropy values for each sequence
     for batch in dataloader:
-        x, _, _, _ = batch  # Assuming batch is a tuple (x, y, lens, mask)
+        x, _, _, _ = batch  # batch is a tuple (x, y, lens, mask)
         all_data.append(x)
+
+        # Compute Shannon Entropy for each sequence in the batch
+        for seq in x:
+            seq_np = seq.cpu().numpy()  # Convert to NumPy array
+            shannon_entropy = compute_shannon_entropy(seq_np)
+            all_entropies.append(shannon_entropy)
+
+
     all_data = torch.cat(all_data, dim=0)
     
-    snr = compute_snr(all_data)
     feature_corr = compute_feature_correlation(all_data)
     autocorr = compute_autocorrelation_pandas(all_data)
+    completeness = compute_completeness(all_data)
+
+    avg_shannon_entropy = np.mean(all_entropies)
     
     return {
-        'SNR': snr,
         'Average Feature Correlation': feature_corr,
-        'Average Autocorrelation': autocorr
+        'Average Autocorrelation': autocorr,
+        'Completeness (%)': completeness,
+        'Average Shannon Entropy': avg_shannon_entropy,
     }
 
 
