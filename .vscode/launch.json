@@ -37,6 +37,14 @@
             "program": "${workspaceFolder}/experiments/measurement_notes/traditional_random_forest.py",
             "console": "integratedTerminal",
             "justMyCode": true
+        },
+        {
+            "name":"ValidateDataset",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/experiments/measurement_notes/validate_dataset.py",
+            "console": "integratedTerminal",
+            "justMyCode": true
         }
     ]
 }
