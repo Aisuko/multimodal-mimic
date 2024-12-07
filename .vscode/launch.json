@@ -10,7 +10,7 @@
             "name": "Downstream",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/experiments/measurement_notes/measurement_notes_downstream.py",
+            "program": "${workspaceFolder}/experiments/measurement_notes/measurement_notes_llm.py",
             "console": "integratedTerminal",
             "justMyCode": true
         },

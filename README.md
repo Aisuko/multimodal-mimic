@@ -120,17 +120,6 @@ After adding the files, the structure of your MIMIC-III Benchmark folder should 
 Structure for ImageNet Data
 ```
 mimic3-benchmarks
-├── phenotyping
-│   ├── 1percent_train_listfile.csv
-│   ├── 10percent_train_listfile.csv
-│   ├── 50percent_train_listfile.csv
-│   ├── 1percent_val_listfile.csv
-│   ├── 10percent_val_listfile.csv
-│   ├── 50percent_val_listfile.csv
-│   ├── train_listfile.csv
-│   ├── val_listfile.csv
-│   ├── test_listfile.csv
-│   └── 
 ├── in-hospital-mortality
 │   ├── 1percent_train_listfile.csv
 │   ├── 10percent_train_listfile.csv
@@ -147,16 +136,7 @@ mimic3-benchmarks
 │   └── 
 ```
 
-### Requirements
 
-The python version used to run our experiments is 3.9.16. Requirements can be found in the requirements.txt file. Install them by running:
+# Acknowledgements
 
-`pip install -r requirements.txt`
-
-## Pretraining
-
-Pretraining can be run using the script located at `experiments/measurement_notes/measurement_notes_pretraining.py`. We've included an example command in `pretrain`
-
-## Finetune
-
-Pretraining can be run using the script located at `experiments/measurement_notes/measurement_notes_downstream.py`. We've included an example command in `finetuning`. This command requires an experiment and task be provided. Possible experiments include `semi_0_5_eval`, `semi_0_1_eval`, `semi_0_01_eval`, `full_eval`, and `linear_eval`. Possible tasks include: `IHM` and `Phenotyping`. A pretrained model can be provided using `pretrained_path`. An example of our finetuning experiment can be found at `linear_eval`. Download the model used for this evaluation [here](https://drive.google.com/drive/folders/1wB-4kUrNB9cHqD1qvR5fFEOaIUXmXTxI?usp=sharing)
+I acknowlwdge [Ryan King etc al.](https://github.com/kingrc15/multimodal-clinical-pretraining)'s work. Thanks for your contribution.

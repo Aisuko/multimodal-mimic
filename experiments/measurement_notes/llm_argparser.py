@@ -6,17 +6,6 @@ def parser():
 
     # Experiment
     parser.add_argument("--exp_name", type=str, default="exp")
-    parser.add_argument(
-        "--experiment",
-        choices=[
-            "semi_0_5_eval",
-            "semi_0_1_eval",
-            "semi_0_01_eval",
-            "full_eval",
-            "linear_eval",
-        ],
-        default="linear_eval",
-    )
     parser.add_argument("--task", choices=["IHM", "Phenotyping"], default="IHM")
     # parser.add_argument("--pretrained_path", type=str, default=None)
     parser.add_argument("--pretrained_path", type=str, default='/home/ubuntu/workspace/multimodal-mimic/multimodal_clinical_pretraining/pretrain/pretrained_model.pth')
