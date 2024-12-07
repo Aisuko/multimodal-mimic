@@ -117,19 +117,13 @@ For our semi-supervised experiments, we created new listfiles which can be downl
 
 After adding the files, the structure of your MIMIC-III Benchmark folder should look like this:
 
-Structure for ImageNet Data
 ```
 mimic3-benchmarks
 ├── in-hospital-mortality
-│   ├── 1percent_train_listfile.csv
-│   ├── 10percent_train_listfile.csv
-│   ├── 50percent_train_listfile.csv
-│   ├── 1percent_val_listfile.csv
-│   ├── 10percent_val_listfile.csv
-│   ├── 50percent_val_listfile.csv
 │   ├── train_listfile.csv
-│   ├── val_listfile.csv
 │   ├── test_listfile.csv
+│   ├── train
+│   ├── test
 │   └── 
 ├── root
 │   ├── 

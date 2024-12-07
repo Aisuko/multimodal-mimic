@@ -13,14 +13,8 @@ from torchvision import transforms
 
 from torchmimic.utils import pad_colalte
 from torchmimic.data.preprocessing import Normalizer
-from torchmimic.data import (
-    IHMDataset,
-    PhenotypingDataset,
-)
-from torchmimic.loggers import (
-    IHMLogger,
-    PhenotypingLogger,
-)
+from torchmimic.data import IHMDataset
+from torchmimic.loggers import IHMLogger
 
 from downstream_argparser import parser
 
@@ -147,8 +141,6 @@ def train(args, train_dataloader, test_dataloader):
 
     if args.task == "IHM":
         logger = IHMLogger(args.exp_name, args, log_wandb=False)
-    elif args.task == "Phenotyping":
-        logger = PhenotypingLogger(args.exp_name, args, log_wandb=False)
 
     criteria = nn.BCELoss()
 
@@ -237,27 +229,12 @@ if __name__ == "__main__":
     listfile=""
     if args.task == "IHM":
         root = os.path.join(args.mimic_benchmark_root, "in-hospital-mortality")
-        train_listfile = listfile + "1percent_train_listfile.csv"
-        val_listfile = "1percent_val_listfile.csv"
-        test_listfile = "1percent_test_listfile.csv"
+        train_listfile = listfile + "train_listfile.csv"
+        test_listfile = "test_listfile.csv"
         train_dataset = IHMDataset(
             root, customListFile=os.path.join(root, train_listfile), train=True
         )
         test_dataset = IHMDataset(
-            root, customListFile=os.path.join(root, test_listfile), train=False
-        )
-    elif args.task == "Phenotyping":
-        root = os.path.join(args.mimic_benchmark_root, "phenotyping")
-        train_listfile = listfile + "train_listfile.csv"
-        val_listfile = "val_listfile.csv"
-        test_listfile = "test_listfile.csv"
-        train_dataset = PhenotypingDataset(
-            root,
-            customListFile=os.path.join(root, train_listfile),
-            train=True,
-            transform=ShuffleTransform(args.measurement_max_seq_len),
-        )
-        test_dataset = PhenotypingDataset(
             root, customListFile=os.path.join(root, test_listfile), train=False
         )
 
@@ -307,9 +284,6 @@ if __name__ == "__main__":
 
     if args.task == "IHM":
         args.n_classes = 1
-
-    elif args.task == "Phenotyping":
-        args.n_classes = 25
 
     torch.manual_seed(42)
     np.random.seed(42)
