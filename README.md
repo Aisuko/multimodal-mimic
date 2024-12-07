@@ -59,6 +59,8 @@ conda install pytorch torchvision torchaudio pytorch-cuda=11.8 -c pytorch -c nvi
 pip install 'torchmimic @ git+https://github.com/kingrc15/torchmimic.git@b3610fc98025ec42903e7646c715b4a5faeac403'
 pip install pandas
 pip install transformers
+conda install -c conda-forge py-xgboost-gpu
+conda install -c conda-forge statsmodels
 ```
 
 ```bash

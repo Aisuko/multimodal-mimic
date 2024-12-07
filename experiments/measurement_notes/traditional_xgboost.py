@@ -18,8 +18,6 @@ from multimodal_clinical_pretraining.data.utils import ShuffleTransform
 
 from torchmimic.data import IHMDataset
 from torchmimic.data.preprocessing import Normalizer
-from torchmimic.loggers import IHMLogger
-
 from torchmimic.utils import pad_colalte
 
 def train(args, train_dataloader, test_dataloader):

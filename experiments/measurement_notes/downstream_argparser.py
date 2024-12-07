@@ -50,7 +50,7 @@ def parser():
     parser.add_argument("--decay_rate", default=0.9, type=float) # ensure a gradual reduction in the learning rate
     parser.add_argument("--warmup_epochs", default=0, type=int) # for fitting 1e-3, we set 5-10 epochs to allow the model to gradually adapt to the learning process
     parser.add_argument("--cooldown_epochs", default=5, type=int)
-    parser.add_argument("--epochs", type=int, default=5)
+    parser.add_argument("--epochs", type=int, default=400)
     parser.add_argument("--grad_clip", type=float, default=5)
 
     # Multimodal Model
