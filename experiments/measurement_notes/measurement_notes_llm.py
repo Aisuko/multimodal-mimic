@@ -222,15 +222,6 @@ if __name__ == "__main__":
     torch.backends.cuda.matmul.allow_tf32 = True
     torch.backends.cudnn.deterministic = True
 
-    if args.experiment == "semi_0_1_eval":
-        listfile = "10percent_"
-    elif args.experiment == "semi_0_01_eval":
-        listfile = "1percent_"
-    elif args.experiment == "semi_0_5_eval":
-        listfile = "50percent_"
-    else:
-        listfile = ""
-
     train_measurement_transform = transforms.Compose(
         [
             ShuffleTransform(args.measurement_max_seq_len),
@@ -243,7 +234,7 @@ if __name__ == "__main__":
         ]
     )
 
-    print(listfile)
+    listfile=""
     if args.task == "IHM":
         root = os.path.join(args.mimic_benchmark_root, "in-hospital-mortality")
         train_listfile = listfile + "1percent_train_listfile.csv"
@@ -252,9 +243,6 @@ if __name__ == "__main__":
         train_dataset = IHMDataset(
             root, customListFile=os.path.join(root, train_listfile), train=True
         )
-        # val_dataset = IHMDataset(
-        #     root, customListFile=os.path.join(root, val_listfile), train=True
-        # )
         test_dataset = IHMDataset(
             root, customListFile=os.path.join(root, test_listfile), train=False
         )
@@ -269,9 +257,6 @@ if __name__ == "__main__":
             train=True,
             transform=ShuffleTransform(args.measurement_max_seq_len),
         )
-        # val_dataset = PhenotypingDataset(
-        #     root, customListFile=os.path.join(root, val_listfile), train=True
-        # )
         test_dataset = PhenotypingDataset(
             root, customListFile=os.path.join(root, test_listfile), train=False
         )
@@ -287,11 +272,6 @@ if __name__ == "__main__":
     train_dataset.normalizer.load_params(
         "./multimodal_clinical_pretraining/resources/normalizer_params"
     )
-
-    # val_dataset.normalizer = Normalizer(fields=cont_channels)
-    # val_dataset.normalizer.load_params(
-    #     "./multimodal_clinical_pretraining/resources/normalizer_params"
-    # )
 
     test_dataset.normalizer = Normalizer(fields=cont_channels)
     test_dataset.normalizer.load_params(
@@ -312,15 +292,6 @@ if __name__ == "__main__":
         pin_memory=True,
         shuffle=True,
     )
-
-    # val_dataloader = DataLoader(
-    #     val_dataset,
-    #     batch_size=args.batch_size * 2,
-    #     num_workers=0,
-    #     collate_fn=pad_colalte,
-    #     pin_memory=True,
-    #     shuffle=False,
-    # )
 
     test_dataloader = DataLoader(
         test_dataset,
@@ -346,6 +317,5 @@ if __name__ == "__main__":
     output = train(
         args,
         train_dataloader,
-        # val_dataloader,
         test_dataloader,
     )
