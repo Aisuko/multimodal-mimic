@@ -73,7 +73,7 @@ conda deactivate
 tmux new -s session_name
 tmux ls
 tmux a -t session_name
-python experiments/measurement_notes/measurement_notes_downstream.py > train_log.txt 2>&1
+time python experiments/measurement_notes/measurement_notes_llm.py > train_log.txt 2>&1
 Control+B D
 htop
 nvidia-smi
