@@ -12,7 +12,7 @@ rootDir = os.path.abspath(os.path.join(currDir, "../.."))
 if rootDir not in sys.path:  # add parent dir to paths
     sys.path.append(rootDir)
 
-from downstream_argparser import parser
+from llm_argparser import parser
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
 from multimodal_clinical_pretraining.data.utils import ShuffleTransform
 
@@ -97,7 +97,6 @@ if __name__ == "__main__":
 
     root = os.path.join(args.mimic_benchmark_root, "in-hospital-mortality")
     train_listfile = listfile + "1percent_train_listfile.csv"
-    val_listfile = "1percent_val_listfile.csv"
     test_listfile = "1percent_test_listfile.csv"
 
     train_dataset = IHMDataset(

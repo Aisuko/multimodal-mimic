@@ -16,7 +16,7 @@ from torchmimic.data.preprocessing import Normalizer
 from torchmimic.data import IHMDataset
 from torchmimic.loggers import IHMLogger
 
-from downstream_argparser import parser
+from llm_argparser import parser
 
 currDir = os.path.dirname(os.path.realpath(__file__))
 rootDir = os.path.abspath(os.path.join(currDir, "../.."))
@@ -123,11 +123,9 @@ def train(args, train_dataloader, test_dataloader):
         args.n_classes
     ).to(args.device)
 
-    if args.experiment == "full_eval":
-        params = model.parameters()
-    elif args.experiment == "linear_eval":
-        params = model.classifier.parameters()
-        model.base_model.eval()
+
+    params = model.classifier.parameters()
+    model.base_model.eval()
 
     optimizer = optim.AdamW(
         params,
