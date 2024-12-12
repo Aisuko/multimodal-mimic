@@ -17,6 +17,24 @@ real    63m37.135s
 user    360m57.455s
 sys     10m30.789s
 
+## 42
+> 42-30 on different machines, the metrics were influent by this
+
+real    31m29.238s
+user    34m27.337s
+sys     0m5.543s
+
+## 36
+
+real    34m25.224s
+user    37m38.794s
+sys     0m5.896s
+
+## 30
+
+real    38m27.178s
+user    42m6.652s
+sys     0m6.050s
 
 ## 24 hours
 
