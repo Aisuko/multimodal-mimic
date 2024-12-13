@@ -1,0 +1,1 @@
+conda env update -n py310 -f .devcontainer/environment.yml

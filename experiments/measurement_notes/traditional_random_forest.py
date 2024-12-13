@@ -98,8 +98,8 @@ if __name__ == "__main__":
     )
 
     root = os.path.join(args.mimic_benchmark_root, "in-hospital-mortality")
-    train_listfile = listfile + "1percent_train_listfile.csv"
-    test_listfile = "1percent_test_listfile.csv"
+    train_listfile = listfile + "train_listfile.csv"
+    test_listfile = "test_listfile.csv"
 
     train_dataset = IHMDataset(
         root, customListFile=os.path.join(root, train_listfile), train=True

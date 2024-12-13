@@ -1,0 +1,11 @@
+name: py310
+channels:
+  - conda-forge
+dependencies:
+  - pandas
+  - transformers
+  - py-xgboost-gpu
+  - statsmodels
+  - pip
+  - pip:
+      - torchmimic @ git+https://github.com/kingrc15/torchmimic.git@b3610fc98025ec42903e7646c715b4a5faeac403

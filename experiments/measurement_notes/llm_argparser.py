@@ -8,7 +8,7 @@ def parser():
     parser.add_argument("--exp_name", type=str, default="exp")
     parser.add_argument("--task", choices=["IHM", "Phenotyping"], default="IHM")
     # parser.add_argument("--pretrained_path", type=str, default=None)
-    parser.add_argument("--pretrained_path", type=str, default='/home/ubuntu/workspace/multimodal-mimic/multimodal_clinical_pretraining/pretrain/pretrained_model.pth')
+    parser.add_argument("--pretrained_path", type=str, default='/workspaces/multimodal-mimic/multimodal_clinical_pretraining/pretrain/pretrained_model.pth')
     parser.add_argument("--world-size", default=1, type=int)
     parser.add_argument("--local-rank", default=-1, type=int)
     parser.add_argument("--dist-url", default="env://")
@@ -19,12 +19,12 @@ def parser():
     # Data
     parser.add_argument("--batch_size", type=int, default=512)
     parser.add_argument(
-        "--mimic_root", type=str, default="/home/ubuntu/workspace/mimic_iii_1.4"
+        "--mimic_root", type=str, default="/workspaces/mimic_iii_1.4"
     )
     parser.add_argument(
         "--mimic_benchmark_root",
         type=str,
-        default="/home/ubuntu/workspace/multimodal-mimic/mimic3-benchmarks",
+        default="/workspaces/multimodal-mimic/mimic3-benchmarks",
     )
 
     # Training

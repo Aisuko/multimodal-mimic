@@ -1,0 +1,3 @@
+[submodule "bundoora"]
+	path = bundoora
+	url = https://github.com/SkywardAI/bundoora.git
